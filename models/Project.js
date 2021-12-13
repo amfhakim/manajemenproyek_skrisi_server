@@ -20,10 +20,10 @@ const projectSchema = new Schema({
       ref: "workers",
     },
   ],
-  namaCostumer: String,
-  costumer: {
+  namaCustomer: String,
+  customer: {
     type: Schema.Types.ObjectId,
-    ref: "costumers",
+    ref: "customers",
   },
   createdAt: String,
   username: String,
