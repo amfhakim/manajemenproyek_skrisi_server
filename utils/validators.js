@@ -154,14 +154,20 @@ module.exports.validateUpdateProjectInput = (input) => {
     input;
   const errors = {};
 
-  if (nama.trim() === "") {
-    errors.nama = "nama tidak boleh kosong";
+  if (nama != null) {
+    if (nama.trim() === "") {
+      errors.nama = "nama tidak boleh kosong";
+    }
   }
-  if (alamat.trim() === "") {
-    errors.alamat = "alamat tidak boleh kosong";
+  if (alamat != null) {
+    if (alamat.trim() === "") {
+      errors.alamat = "alamat tidak boleh kosong";
+    }
   }
-  if (namaCustomer.trim() === "") {
-    errors.namaCustomer = "alamat tidak boleh kosong";
+  if (namaCustomer != null) {
+    if (namaCustomer.trim() === "") {
+      errors.namaCustomer = "nama customer tidak boleh kosong";
+    }
   }
 
   return {

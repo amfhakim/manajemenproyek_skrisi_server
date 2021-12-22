@@ -1,0 +1,276 @@
+query getUsers{
+  getUsers{
+    id
+    username
+    name
+    email
+    createdAt
+  }
+}
+
+query getUser{
+  getUser(userId: "61ab04f3ca86de8bd9dc4921"){
+    id
+    username
+    email
+    name
+    createdAt
+  }
+}
+
+mutation register {
+  register(input:{
+    username: "hakim",
+    password: "hakim",
+    confirmPassword: "hakim"
+    email: "hakimabd@mail.com"
+    name: "kim ha abd"
+  }){
+    id
+    username
+    name
+    email
+    createdAt
+  }
+}
+
+mutation login{
+  login(username:"admin"
+  password: "admin"){
+    username
+    token
+    lastLoginAt
+  }
+}
+
+mutation updateUser {
+  updateUser(userId:"61aacf33dc7209b3c34e880d", input:{
+    username:"adminAtarashi",
+    password:"admin",
+    confirmPassword:"admin",
+    email:"adminatarashi@mail.com",
+    name:"admin atarashi"
+  }){
+    id
+    username
+    name
+    email
+    createdAt
+  }
+}
+
+query getCustomers {
+  getCustomers{
+    id
+    nama
+    alamat
+    notlp
+    email
+    createdAt
+    username
+  }
+}
+
+query getCustomer{
+  getCustomer(customerId: "61ab017104c545f227b97d12"){
+    id
+    nama
+    email
+  }
+}
+
+mutation createCustomer {
+  createCustomer(input: {
+    nama: "Kikan",
+    alamat: "Jl. Karma Remix",
+    notlp: "08545554321",
+    email: "KikanCokelat@mail.com"
+  }){
+    id
+    nama
+    alamat
+    notlp
+    email
+    createdAt
+    username
+  }
+}
+
+mutation deleteCustomer{
+  deleteCustomer(customerId: "61aaff8904c545f227b97d09")
+}
+
+mutation updateCustomer{
+  updateCustomer(customerId:"61ab0bca459a41493b5eb945",input:{
+    nama:"Hapus Aku"
+  }){
+    id
+    nama
+    notlp
+    alamat
+    email
+    createdAt
+    username
+  }
+}
+
+mutation custUpdateProjs {
+  customerUpdateProjects(customerId: "61ab0c18459a41493b5eb947",
+  projectIds: ["61bc358b2f42d291b2e41a2b"],
+  addOrDel: true){
+    id
+    nama
+    email
+    notlp
+    alamat
+  }
+}
+
+query getWorkers{
+  getWorkers {
+    id
+    nama
+    alamat
+    notlp
+    email
+    presensi {
+      id
+      tanggal
+      kehadiran
+    }
+  }
+}
+
+query getWorker{
+  getWorker(workerId: "61b008a9436887e42b0d6cff") {
+    id
+    nama
+    alamat
+    notlp
+    email
+    presensi {
+      id
+      tanggal
+      kehadiran
+    }
+  }
+}
+
+mutation createWorker{
+  createWorker(input:{
+    nama:"Usman",
+    notlp:"082312345123",
+    email:"oesman@mail.com"
+    alamat:"Jl. YG Lurus no. 19"}){
+      id
+      nama
+      notlp
+      alamat
+      email
+    }
+}
+
+mutation updateWorker{
+  updateWorker(workerId:"61b008a9436887e42b0d6cff", 
+  input: {
+    email:"hendragon@mail.com"
+  }) {
+    id
+    nama
+    notlp
+    email
+    alamat
+    createdAt
+    username
+  }
+}
+
+mutation deleteWorker{
+  deleteWorker(workerId: "61b00820436887e42b0d6cfc")
+}
+
+query getProjects{
+  getProjects {
+    id
+    nama
+    namaCustomer
+    alamat
+    startAt
+    endAt
+    namaWorkers
+    createdAt
+    username
+  }
+}
+
+mutation createProject{
+  createProject(input:{
+    nama: "project 10",
+    alamat: "Jl. Perintis, Tangerang",
+    namaCustomer: "Kikan",
+    budget:"170000000",
+    namaWorkers:["Yasin", "Hendra", "Usman"],
+  }){
+    id
+    nama
+    alamat
+    budget
+    namaCustomer
+    namaWorkers
+    customer
+    createdAt
+    username
+  }
+}
+
+mutation updateProject{
+  updateProject(projectId:"61b1a62fd257e7caeac96de7",
+    input: {
+    namaCustomer: "Tantri"
+  }){
+    nama
+    namaCustomer
+    startAt
+    endAt
+    budget
+    namaWorkers
+    customer
+  }
+}
+
+mutation deleteProject {
+  deleteProject(projectId: "61bc775a9bd238800224dacd")
+} 
+
+mutation updateProjectWorkers{
+  updateProjectWorkers(projectId: "61b1a44eedca0b0b2cadb124", 
+  input:["Yasin", "Hendra", "Usman"]){
+    id
+    nama
+    namaCustomer
+    alamat
+    namaWorkers
+  }
+}
+
+query getPresensi{
+  getPresensi{
+    id
+    tanggal
+    kehadiran
+  }
+}
+
+mutation createPresensi{
+  createPresensi(workerId: "61b008a9436887e42b0d6cff", input:{
+    tanggal: "12-01-2021",
+    kehadiran: true
+  }){
+    id
+    tanggal
+    kehadiran
+    createdAt
+    username
+  }
+}
+

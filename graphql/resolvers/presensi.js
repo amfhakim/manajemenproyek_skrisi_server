@@ -6,21 +6,9 @@ const { AuthenticationError, UserInputError } = require("apollo-server-errors");
 
 module.exports = {
   Query: {
-    async getPresensi(_, { workerId }, context) {
-      const { username } = checkAuth(context);
-
-      const worker = await Worker.findById(workerId);
-      if (worker) {
-        if (worker.username === username) {
-          //sampai saat ini baru admin yg bisa ?
-          const presensi = await Presensi.find({ workerId: workerId });
-          return presensi;
-        } else {
-          throw new AuthenticationError("Action not allowed");
-        }
-      } else {
-        throw new UserInputError("worker not found");
-      }
+    async getPresensi(_, args, context) {
+      const presensi = await Presensi.find();
+      return presensi;
     },
   },
   Mutation: {
@@ -53,9 +41,9 @@ module.exports = {
     },
   },
   Presensi: {
-    async worker({ parent }, args, context) {
-      console.log(parent._id);
-      const worker = await Worker.find({ _id: parent.workerId });
+    async worker(parent, args, context) {
+      console.log(parent.worker);
+      const worker = await Worker.find({ _id: parent.worker });
       return worker;
     },
   },

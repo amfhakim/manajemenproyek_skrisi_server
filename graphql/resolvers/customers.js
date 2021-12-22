@@ -111,5 +111,36 @@ module.exports = {
         throw new Error(err);
       }
     },
+
+    async customerUpdateProjects(
+      _,
+      { customerId, projectIds, addOrDel },
+      context
+    ) {
+      const customer = await Customer.findById(customerId);
+      if (addOrDel) {
+        //add project ids
+        customer.projects.push(projectIds);
+        await customer.save();
+      } else {
+        //delete project ids
+        const customerProjects = customer.projects;
+        for (i = 0; i < projectIds.length; i++) {
+          let index = customerProjects.indexOf(projectIds[i]);
+          if (index > -1) {
+            customerProjects.splice(index, 1);
+          }
+        }
+        customer.projects = customerProjects;
+        await customer.save();
+      }
+      return customer;
+    },
+
+    /* async customerDeleteProjects(_, { customerId, projectIds }, context) {
+      //update data
+      const customer = await Customer.findById(customerId);
+      customer.projects
+    } */
   },
 };

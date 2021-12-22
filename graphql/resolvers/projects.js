@@ -2,7 +2,10 @@ const Project = require("../../models/Project");
 const Customer = require("../../models/Customer");
 const Worker = require("../../models/Worker");
 const checkAuth = require("../../utils/check-auth");
-const { validateProjectInput } = require("../../utils/validators");
+const {
+  validateProjectInput,
+  validateUpdateProjectInput,
+} = require("../../utils/validators");
 const { AuthenticationError, UserInputError } = require("apollo-server-errors");
 
 module.exports = {
@@ -83,7 +86,7 @@ module.exports = {
           errors[`worker ${i}`] = `pekerja ${namaWorkers[i]} belum terdaftar`;
         }
       }
-      if (errors.length != 0) {
+      if (errors.length) {
         throw new UserInputError(`pekerja belum terdaftar`, {
           errors,
         });
@@ -106,6 +109,8 @@ module.exports = {
         createdAt: new Date().toISOString(),
       });
       await newProject.save();
+      customer.projects.push(newProject._id);
+      await customer.save();
       return newProject;
     },
 
@@ -113,34 +118,109 @@ module.exports = {
       const user = checkAuth(context);
       try {
         const project = await Project.findById(projectId);
-        if (user.username === project.username) {
-          await project.delete();
-          return "data project berhasil dihapus";
-        } else {
-          throw new AuthenticationError("Action not allowed");
+        const customer = await Customer.findById(project.customer);
+        await project.delete();
+
+        //delete projectId in customer
+        const customerProjects = customer.projects;
+        let index = customerProjects.indexOf(projectId);
+        if (index > -1) {
+          customerProjects.splice(index, 1);
         }
+        customer.projects = customerProjects;
+        await customer.save();
+
+        return "data project berhasil dihapus";
       } catch (err) {
         throw new Error(err);
       }
     },
 
-    /* async updateProject(_, { projectId, input }, context) {
+    async updateProject(_, { projectId, input }, context) {
       const user = checkAuth(context);
 
       //validate input
-      const { valid, errors } = validateProjectInput(input);
+      const { valid, errors } = validateUpdateProjectInput(input);
       if (!valid) {
         throw new UserInputError("Errors", { errors });
       }
 
-      //update data
-      const result = await Worker.findByIdAndUpdate({ _id: projectId }, input, {
-        new: true,
-      });
+      //update customerId in project
+      const { namaCustomer } = input;
+      if (namaCustomer) {
+        const customer = await Customer.findOne({ nama: namaCustomer });
+        if (!customer) {
+          throw new UserInputError("customer belum terdaftar", {
+            errors: {
+              customer: "customer belum terdaftar",
+            },
+          });
+        }
+        const project = await Project.findById(projectId);
+        project.customer = customer._id;
+        await project.save();
+        customer.projects.push(project._id);
+        await customer.save();
+      }
+
+      //update project
+      const result = await Project.findByIdAndUpdate(
+        { _id: projectId },
+        input,
+        {
+          new: true,
+        }
+      );
       return {
         ...result._doc,
         id: result._id,
       };
-    },*/
+    },
+
+    async updateProjectWorkers(_, { projectId, input }, context) {
+      const user = checkAuth(context);
+      const workers = await Worker.find();
+      const workerIds = [];
+      const errors = {};
+
+      //validate workers
+      let ada = false;
+      for (i = 0; i < input.length; i++) {
+        workers.map((wr) => {
+          if (input[i] === wr.nama) {
+            workerIds[i] = wr.id;
+            ada = true;
+          }
+        });
+        if (ada == false) {
+          errors[`worker ${i}`] = `pekerja ${input[i]} belum terdaftar`;
+        }
+      }
+      if (errors.length) {
+        throw new UserInputError(`pekerja belum terdaftar`, {
+          errors,
+        });
+      }
+
+      //update project
+      const valueToUpdate = {
+        namaWorkers: input,
+        workers: workerIds,
+      };
+      const project = await Project.findByIdAndUpdate(
+        { _id: projectId },
+        valueToUpdate,
+        {
+          new: true,
+        }
+      );
+      return project;
+    },
   },
+
+  /*Project: {
+    async workers(_, _, _) {},
+    async costumer(_, _, _) {},
+    async pekerjaans(_, _, _) {},
+  }, */
 };

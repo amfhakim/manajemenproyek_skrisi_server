@@ -11,7 +11,7 @@ module.exports = gql`
     getWorker(workerId: ID!): Worker!
     getProjects: [Project!]
     getProject(projectId: ID!): Project!
-    getPresensi(workerId: ID!): [Presensi!]
+    getPresensi: [Presensi!]
   }
 
   type Mutation {
@@ -22,12 +22,18 @@ module.exports = gql`
     createCustomer(input: CustomerInput!): Customer!
     deleteCustomer(customerId: ID!): String!
     updateCustomer(customerId: ID!, input: UpdateCustomerInput!): Customer!
+    customerUpdateProjects(
+      customerId: ID!
+      projectIds: [ID!]
+      addOrDel: Boolean!
+    ): Customer!
     createWorker(input: WorkerInput!): Worker!
     deleteWorker(workerId: ID!): String!
     updateWorker(workerId: ID!, input: UpdateWorkerInput!): Worker!
     createProject(input: ProjectInput!): Project!
     deleteProject(projectId: ID!): String!
     updateProject(projectId: ID!, input: UpdateProjectInput!): Project!
+    updateProjectWorkers(projectId: ID!, input: [String!]): Project!
     createPresensi(workerId: ID!, input: CreatePresensiInput!): Presensi!
   }
 
@@ -38,7 +44,8 @@ module.exports = gql`
     email: String
     name: String
     createdAt: String
-    token: String!
+    token: String
+    lastLoginAt: String
   }
 
   type Customer {
@@ -47,6 +54,7 @@ module.exports = gql`
     alamat: String
     notlp: String!
     email: String!
+    projects: [Project]
     createdAt: String
     username: String
   }
@@ -67,7 +75,7 @@ module.exports = gql`
 
   type Presensi {
     id: ID!
-    worker: Worker
+    worker: Worker!
     tanggal: String!
     kehadiran: Boolean!
     createdAt: String
@@ -86,7 +94,7 @@ module.exports = gql`
     namaWorkers: [String]
     createdAt: String
     username: String
-    costumer: ID
+    customer: ID
   }
 
   input RegisterInput {
@@ -155,6 +163,5 @@ module.exports = gql`
     budget: String
     startAt: String
     endAt: String
-    namaWorkers: [String]
   }
 `;

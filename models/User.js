@@ -6,6 +6,7 @@ const userSchema = new Schema({
   email: String,
   name: String,
   createdAt: String,
+  lastLoginAt: String,
 });
 
 module.exports = model("User", userSchema);

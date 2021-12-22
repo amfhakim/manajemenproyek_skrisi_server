@@ -110,11 +110,9 @@ module.exports = {
   },
 
   Worker: {
-    async presensi({ parent }, args, context) {
-      console.log(parent);
-      const presen = await Presensi.find({ workerId: parent.id });
-      console.log(parent.id);
-      return presen;
+    async presensi(parent, args, context) {
+      const presensi = await Presensi.find({ worker: parent._id });
+      return presensi;
     },
   },
 };
