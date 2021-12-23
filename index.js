@@ -18,11 +18,11 @@ const server = new ApolloServer({
   plugins: [
     // Install a landing page plugin based on NODE_ENV
     process.env.NODE_ENV === "production"
-      ? ApolloServerPluginLandingPageProductionDefault({
+      ? ApolloServerPluginLandingPageLocalDefault({ footer: false })
+      : ApolloServerPluginLandingPageProductionDefault({
           graphRef: "my-graph-id@my-graph-variant",
           footer: false,
-        })
-      : ApolloServerPluginLandingPageLocalDefault({ footer: false }),
+        }),
   ],
 });
 
