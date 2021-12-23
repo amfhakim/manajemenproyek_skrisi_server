@@ -1,4 +1,5 @@
 const Customer = require("../../models/Customer");
+const Project = require("../../models/Project");
 const checkAuth = require("../../utils/check-auth");
 const { AuthenticationError, UserInputError } = require("apollo-server-errors");
 const { validateCustomerInput } = require("../../utils/validators");
@@ -29,27 +30,15 @@ module.exports = {
   },
 
   Mutation: {
-    async createCustomer(
-      _,
-      { input: { nama, alamat, notlp, email } },
-      context
-    ) {
+    async createCustomer(_, { input }, context) {
       const user = checkAuth(context);
-      const { valid, errors } = validateCustomerInput(
-        nama,
-        alamat,
-        notlp,
-        email
-      );
+      const { valid, errors } = validateCustomerInput(input);
       if (!valid) {
         throw new UserInputError("Errors", { errors });
       }
 
       const newCustomer = new Customer({
-        nama,
-        alamat,
-        notlp,
-        email,
+        ...input,
         user: user.id,
         username: user.username,
         createdAt: new Date().toISOString(),
@@ -91,6 +80,14 @@ module.exports = {
           new: true,
         }
       );
+
+      //update nama in project
+      if (nama) {
+        await Project.updateMany(
+          { customerId: customerId },
+          { namaCustomer: nama }
+        );
+      }
       return {
         ...result._doc,
         id: result._id,
@@ -101,12 +98,13 @@ module.exports = {
       const user = checkAuth(context);
       try {
         const customer = await Customer.findById(customerId);
-        if (user.username === customer.username) {
-          await customer.delete();
-          return "data customer berhasil dihapus";
-        } else {
-          throw new AuthenticationError("Action not allowed");
-        }
+        await customer.delete();
+        await Project.updateMany(
+          { customerId: customerId },
+          { customerId: null }
+        );
+
+        return "data customer berhasil dihapus";
       } catch (err) {
         throw new Error(err);
       }
@@ -120,27 +118,39 @@ module.exports = {
       const customer = await Customer.findById(customerId);
       if (addOrDel) {
         //add project ids
-        customer.projects.push(projectIds);
+        customer.projectIds.push(projectIds);
         await customer.save();
+        for (i = 0; i < projectIds.length; i++) {
+          await Project.findByIdAndUpdate(
+            { _id: projectIds[i] },
+            { customerId: customerId },
+            { new: true }
+          );
+        }
       } else {
         //delete project ids
-        const customerProjects = customer.projects;
+        const customerProjects = customer.projectIds;
         for (i = 0; i < projectIds.length; i++) {
           let index = customerProjects.indexOf(projectIds[i]);
           if (index > -1) {
             customerProjects.splice(index, 1);
           }
         }
-        customer.projects = customerProjects;
+        customer.projectIds = customerProjects;
         await customer.save();
+        await Project.updateMany(
+          { customerId: customerId },
+          { customerId: null }
+        );
       }
       return customer;
     },
+  },
 
-    /* async customerDeleteProjects(_, { customerId, projectIds }, context) {
-      //update data
-      const customer = await Customer.findById(customerId);
-      customer.projects
-    } */
+  Customer: {
+    async projects(parent, args, context) {
+      const projects = await Project.find({ customerId: parent._id });
+      return projects;
+    },
   },
 };

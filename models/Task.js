@@ -6,19 +6,19 @@ const taskSchema = new Schema({
   startAt: String,
   endAt: String,
   progres: String,
-  materials: [
+  materialIds: [
     {
       type: Schema.Types.ObjectId,
       ref: "materials",
     },
   ],
-  tools: [
+  toolIds: [
     {
       type: Schema.Types.ObjectId,
       ref: "tools",
     },
   ],
-  project: {
+  projectId: {
     type: Schema.Types.ObjectId,
     ref: "projects",
   },

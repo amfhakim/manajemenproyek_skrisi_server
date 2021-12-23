@@ -8,13 +8,13 @@ const workerSchema = new Schema({
   jabatan: String,
   gaji: String,
   foto: String,
-  presensi: [
+  presenceIds: [
     {
       type: Schema.Types.ObjectId,
-      ref: "presensi",
+      ref: "presences",
     },
   ],
-  projects: [
+  projectIds: [
     {
       type: Schema.Types.ObjectId,
       ref: "projects",

@@ -7,6 +7,10 @@ const toolSchema = new Schema({
   totalHarga: String,
   createdAt: String,
   username: String,
+  taskId: {
+    type: Schema.Types.ObjectId,
+    ref: "tasks",
+  },
 });
 
 module.exports = model("Tool", toolSchema);

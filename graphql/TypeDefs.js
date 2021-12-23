@@ -11,7 +11,7 @@ module.exports = gql`
     getWorker(workerId: ID!): Worker!
     getProjects: [Project!]
     getProject(projectId: ID!): Project!
-    getPresensi: [Presensi!]
+    getPresence: [Presence!]
   }
 
   type Mutation {
@@ -30,11 +30,20 @@ module.exports = gql`
     createWorker(input: WorkerInput!): Worker!
     deleteWorker(workerId: ID!): String!
     updateWorker(workerId: ID!, input: UpdateWorkerInput!): Worker!
+    workerUpdateProjects(
+      workerId: ID!
+      projectIds: [ID!]
+      addOrDel: Boolean!
+    ): Customer!
     createProject(input: ProjectInput!): Project!
     deleteProject(projectId: ID!): String!
     updateProject(projectId: ID!, input: UpdateProjectInput!): Project!
-    updateProjectWorkers(projectId: ID!, input: [String!]): Project!
-    createPresensi(workerId: ID!, input: CreatePresensiInput!): Presensi!
+    updateProjectWorkers(
+      projectId: ID!
+      input: [String!]
+      addOrDel: Boolean!
+    ): Project!
+    createPresence(workerId: ID!, input: CreatePresenceInput!): Presence!
   }
 
   type User {
@@ -68,12 +77,13 @@ module.exports = gql`
     jabatan: String
     gaji: String
     foto: String
-    presensi: [Presensi]
+    presence: [Presence]
     createdAt: String
     username: String
+    projects: [Project]
   }
 
-  type Presensi {
+  type Presence {
     id: ID!
     worker: Worker!
     tanggal: String!
@@ -94,7 +104,8 @@ module.exports = gql`
     namaWorkers: [String]
     createdAt: String
     username: String
-    customer: ID
+    customer: Customer
+    workers: [Worker]
   }
 
   input RegisterInput {
@@ -144,7 +155,7 @@ module.exports = gql`
     email: String
   }
 
-  input CreatePresensiInput {
+  input CreatePresenceInput {
     tanggal: String
     kehadiran: Boolean
   }

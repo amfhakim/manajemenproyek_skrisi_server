@@ -1,0 +1,52 @@
+tadi gue ngubah model untuk presensi jadi presence          [checked]
+
+sekarang lagi ngerjain updateProjectWorkers                 [checked]
+- nambahin fungsi "are workers already in this project?"
+
+
+MEMBUAT HUBUNGAN CUSTOMER-PROJECT-WORKER
+update project di worker sama customer beneran kepake gak?
+kalau gak buang aja
+
+resolver project mutation:
+- create project => 
+    auto isi id project di customer dan worker              [checked]
+tinggal bikin resolver query customer-project-worker        [checked]
+
+API checklist:
+A. USER
+    1. register                                             [checked]
+    2. login                                                [checked]
+    3. query users                                          [checked]
+    4. query user                                           [checked]
+    5. update user                                          [checked]
+    6. delete user                                          [checked]
+
+B. CUSTOMER
+    1. create customer                                      [checked]
+    2. query customers                                      [checked]
+    3. query customer                                       [checked]
+    4. update customer                                      [checked]
+    5. delete customer                                      [checked]                                        
+    6. update project in customer                           [checked]
+    7. query project in customer                            [checked]
+
+C. WORKER
+    1. create worker                                        [checked]
+    2. query workers                                        [checked]
+    3. query worker                                         [checked]
+    4. update worker                                        [checked]
+    5. delete worker                                        [checked]
+    6. update project in worker                             [checked]
+    7. query project in worker                              [checked]
+
+D. PROJECT
+    1. create project                                       [checked]
+    2. query projects                                       [checked]
+    3. query project                                        [checked]
+    4. update project                                       [checked]
+    5. delete project                                       [checked]
+    6. update customer in project                           [checked]
+    7. update worker in project                             [checked]
+    8. query customer in project                            [checked]
+    9. query worker in project                              [checked]

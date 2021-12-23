@@ -7,21 +7,21 @@ const projectSchema = new Schema({
   startAt: String,
   endAt: String,
   progres: String,
-  tasks: [
+  taskIds: [
     {
       type: Schema.Types.ObjectId,
       ref: "tasks",
     },
   ],
   namaWorkers: [String],
-  workers: [
+  workerIds: [
     {
       type: Schema.Types.ObjectId,
       ref: "workers",
     },
   ],
   namaCustomer: String,
-  customer: {
+  customerId: {
     type: Schema.Types.ObjectId,
     ref: "customers",
   },

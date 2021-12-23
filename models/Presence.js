@@ -1,7 +1,7 @@
 const { model, Schema } = require("mongoose");
 
-const presensiSchema = new Schema({
-  worker: {
+const presenceSchema = new Schema({
+  workerId: {
     type: Schema.Types.ObjectId,
     ref: "workers",
   },
@@ -15,4 +15,4 @@ const presensiSchema = new Schema({
   },
 });
 
-module.exports = model("Presensi", presensiSchema);
+module.exports = model("Presence", presenceSchema);

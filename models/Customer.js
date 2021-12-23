@@ -5,7 +5,7 @@ const customerSchema = new Schema({
   alamat: String,
   notlp: String,
   email: String,
-  projects: [
+  projectIds: [
     {
       type: Schema.Types.ObjectId,
       ref: "projects",

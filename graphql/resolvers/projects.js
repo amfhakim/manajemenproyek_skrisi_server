@@ -102,38 +102,57 @@ module.exports = {
         endAt,
         progres: "0",
         namaWorkers,
-        workers: workerIds,
-        customer: customer.id,
+        workerIds: workerIds,
+        customerId: customer.id,
         user: user.id,
         username: user.username,
         createdAt: new Date().toISOString(),
       });
       await newProject.save();
-      customer.projects.push(newProject._id);
+
+      //add projectId in customer
+      customer.projectIds.push(newProject._id);
       await customer.save();
+
+      //add project id in workers
+      for (i = 0; i < workerIds.length; i++) {
+        const worker = await Worker.findById(workerIds[i]);
+        worker.projectIds.push(newProject._id);
+        worker.save();
+      }
       return newProject;
     },
 
     async deleteProject(_, { projectId }, context) {
       const user = checkAuth(context);
-      try {
-        const project = await Project.findById(projectId);
-        const customer = await Customer.findById(project.customer);
-        await project.delete();
-
-        //delete projectId in customer
-        const customerProjects = customer.projects;
-        let index = customerProjects.indexOf(projectId);
-        if (index > -1) {
-          customerProjects.splice(index, 1);
-        }
-        customer.projects = customerProjects;
-        await customer.save();
-
-        return "data project berhasil dihapus";
-      } catch (err) {
-        throw new Error(err);
+      const project = await Project.findById(projectId);
+      const customer = await Customer.findById(project.customerId);
+      const workers = [{}];
+      for (i = 0; i < project.workerIds.length; i++) {
+        workers[i] = await Worker.findById(project.workerIds[i]);
       }
+      await project.delete();
+
+      //delete projectId in customer
+      const customerProjects = customer.projectIds;
+      let index = customerProjects.indexOf(projectId);
+      if (index > -1) {
+        customerProjects.splice(index, 1);
+      }
+      customer.projectIds = customerProjects;
+      await customer.save();
+
+      //delete projectId in workers
+      for (i = 0; i < workers.length; i++) {
+        const workerProjects = workers[i].projectIds;
+        let index = workerProjects.indexOf(projectId);
+        if (index > -1) {
+          workerProjects.splice(index, 1);
+        }
+        workers[i].update({ projectIds: workerProjects });
+      }
+
+      return "data project berhasil dihapus";
     },
 
     async updateProject(_, { projectId, input }, context) {
@@ -156,11 +175,27 @@ module.exports = {
             },
           });
         }
+        //change customer id in project
         const project = await Project.findById(projectId);
-        project.customer = customer._id;
+        const exCustomerId = project.customerId;
+        project.customerId = customer._id;
         await project.save();
-        customer.projects.push(project._id);
+
+        //change project id in new customer
+        customer.projectIds.push(project._id);
         await customer.save();
+
+        //delete project id in previous customer
+        const exCustomer = await Customer.findById(exCustomerId);
+        if (exCustomer) {
+          const customerProjects = exCustomer.projectIds;
+          let index = customerProjects.indexOf(projectId);
+          if (index > -1) {
+            customerProjects.splice(index, 1);
+          }
+          exCustomer.projectIds = customerProjects;
+          await exCustomer.save();
+        }
       }
 
       //update project
@@ -171,19 +206,17 @@ module.exports = {
           new: true,
         }
       );
-      return {
-        ...result._doc,
-        id: result._id,
-      };
+      return result;
     },
 
-    async updateProjectWorkers(_, { projectId, input }, context) {
+    async updateProjectWorkers(_, { projectId, input, addOrDel }, context) {
       const user = checkAuth(context);
+      const project = await Project.findById(projectId);
       const workers = await Worker.find();
       const workerIds = [];
       const errors = {};
 
-      //validate workers
+      //are workers already in our database?
       let ada = false;
       for (i = 0; i < input.length; i++) {
         workers.map((wr) => {
@@ -202,25 +235,83 @@ module.exports = {
         });
       }
 
-      //update project
-      const valueToUpdate = {
-        namaWorkers: input,
-        workers: workerIds,
-      };
-      const project = await Project.findByIdAndUpdate(
-        { _id: projectId },
-        valueToUpdate,
-        {
-          new: true,
+      //update workers in project
+      if (addOrDel) {
+        //are workers already in this project?
+        let sudahAda = false;
+        for (i = 0; i < input.length; i++) {
+          for (j = 0; j < project.namaWorkers.length; j++) {
+            if (input[i] == project.namaWorkers[j]) {
+              sudahAda = true;
+            }
+          }
+          if (sudahAda == true) {
+            errors[`worker ${i}`] = `pekerja ${input[i]} sudah ada di project`;
+          }
         }
-      );
+        if (errors.length) {
+          throw new UserInputError(`pekerja sudah ada`, {
+            errors,
+          });
+        }
+        //add workers ids and names
+        project.workerIds.push(workerIds);
+        project.namaWorkers.push(...input);
+        await project.save();
+
+        //add project id in workers
+        for (i = 0; i < workerIds.length; i++) {
+          const worker = await Worker.findById(workerIds[i]);
+          worker.projectIds.push(projectId);
+          worker.save();
+        }
+      } else {
+        //delete workers ids and names
+        const projectWorkersIds = project.workerIds;
+        const projectWorkersNames = project.namaWorkers;
+        for (i = 0; i < input.length; i++) {
+          let index = projectWorkersIds.indexOf(workerIds[i]);
+          let indexn = projectWorkersNames.indexOf(input[i]);
+          if (index > -1) {
+            projectWorkersIds.splice(index, 1);
+          }
+          if (indexn > -1) {
+            projectWorkersNames.splice(indexn, 1);
+          }
+        }
+        project.workerIds = projectWorkersIds;
+        project.namaWorkers = projectWorkersNames;
+        await project.save();
+
+        //delete project id in workers
+        for (i = 0; i < workerIds.length; i++) {
+          const worker = await Worker.findById(workerIds[i]);
+          const workerProjects = worker.projectIds;
+          let index = workerProjects.indexOf(projectId);
+          if (index > -1) {
+            workerProjects.splice(index, 1);
+          }
+          worker.projectIds = workerProjects;
+          await worker.save();
+        }
+      }
       return project;
+      //change projectId in
     },
   },
 
-  /*Project: {
-    async workers(_, _, _) {},
-    async costumer(_, _, _) {},
-    async pekerjaans(_, _, _) {},
-  }, */
+  Project: {
+    async customer(parent, args, context) {
+      const customer = await Customer.findById(parent.customerId);
+      return customer;
+    },
+    async workers(parent, args, context) {
+      const workers = await Worker.find({
+        nama: parent.namaWorkers.map((n) => {
+          return n;
+        }),
+      });
+      return workers;
+    },
+  },
 };

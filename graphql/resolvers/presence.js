@@ -1,18 +1,18 @@
 const Worker = require("../../models/Worker");
-const Presensi = require("../../models/Presensi");
+const Presence = require("../../models/Presence");
 const checkAuth = require("../../utils/check-auth");
-const { validatePresensiInput } = require("../../utils/validators");
+const { validatePresenceInput } = require("../../utils/validators");
 const { AuthenticationError, UserInputError } = require("apollo-server-errors");
 
 module.exports = {
   Query: {
-    async getPresensi(_, args, context) {
-      const presensi = await Presensi.find();
-      return presensi;
+    async getPresence(_, args, context) {
+      const presence = await Presence.find();
+      return presence;
     },
   },
   Mutation: {
-    async createPresensi(_, { workerId, input }, context) {
+    async createPresence(_, { workerId, input }, context) {
       //tanggal masih error(tanggalnya jadi -1), tapi udah lancar diinput
       const user = checkAuth(context);
       const { tanggal, kehadiran } = input;
@@ -20,13 +20,13 @@ module.exports = {
       //validasi worker & tanggal
       const worker = await Worker.findById(workerId);
       if (worker) {
-        const { valid, errors } = validatePresensiInput(tanggal);
+        const { valid, errors } = validatePresenceInput(tanggal);
         if (!valid) {
           throw new UserInputError("Errors", { errors });
         }
 
-        //membuat presensi baru
-        const newPresensi = new Presensi({
+        //membuat presence baru
+        const newPresence = new Presence({
           worker: workerId,
           tanggal: new Date(tanggal).toString(),
           kehadiran: kehadiran,
@@ -35,12 +35,12 @@ module.exports = {
           createdAt: new Date().toISOString(),
         });
 
-        await newPresensi.save();
-        return newPresensi;
+        await newPresence.save();
+        return newPresence;
       }
     },
   },
-  Presensi: {
+  Presence: {
     async worker(parent, args, context) {
       console.log(parent.worker);
       const worker = await Worker.find({ _id: parent.worker });

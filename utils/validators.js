@@ -82,7 +82,8 @@ module.exports.validateCustomerInput = (input, checkNama) => {
     }
   }
   if (checkNama) {
-    errors.nama = "username already taken";
+    console.log(checkNama);
+    errors.nama = "nama customer sudah ada";
   }
 
   return {
@@ -176,7 +177,7 @@ module.exports.validateUpdateProjectInput = (input) => {
   };
 };
 
-module.exports.validatePresensiInput = (tanggal) => {
+module.exports.validatePresenceInput = (tanggal) => {
   const errors = {};
 
   if (tanggal.trim() === "") {

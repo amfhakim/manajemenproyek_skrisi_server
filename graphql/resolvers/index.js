@@ -2,7 +2,7 @@ const usersResolvers = require("./users");
 const customersResolvers = require("./customers");
 const workersResolvers = require("./workers");
 const projectsResolvers = require("./projects");
-const presensiResolvers = require("./presensi");
+const presenceResolvers = require("./presence");
 
 module.exports = {
   Query: {
@@ -10,19 +10,25 @@ module.exports = {
     ...customersResolvers.Query,
     ...workersResolvers.Query,
     ...projectsResolvers.Query,
-    ...presensiResolvers.Query,
+    ...presenceResolvers.Query,
   },
   Mutation: {
     ...usersResolvers.Mutation,
     ...customersResolvers.Mutation,
     ...workersResolvers.Mutation,
     ...projectsResolvers.Mutation,
-    ...presensiResolvers.Mutation,
+    ...presenceResolvers.Mutation,
+  },
+  Project: {
+    ...projectsResolvers.Project,
+  },
+  Customer: {
+    ...customersResolvers.Customer,
   },
   Worker: {
     ...workersResolvers.Worker,
   },
-  Presensi: {
-    ...presensiResolvers.Presensi,
+  Presence: {
+    ...presenceResolvers.Presence,
   },
 };

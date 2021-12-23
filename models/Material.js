@@ -7,7 +7,7 @@ const materialSchema = new Schema({
   satuan: String,
   harga: String,
   totalHarga: String,
-  task: {
+  taskId: {
     type: Schema.Types.ObjectId,
     ref: "tasks",
   },
