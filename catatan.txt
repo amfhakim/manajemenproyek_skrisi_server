@@ -50,3 +50,8 @@ D. PROJECT
     7. update worker in project                             [checked]
     8. query customer in project                            [checked]
     9. query worker in project                              [checked]
+
+
+    --------------MAU DEPLOY-------------
+
+    
