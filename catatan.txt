@@ -54,7 +54,7 @@ D. PROJECT
 
 
     --------------MAU DEPLOY-------------
-    untuk deploy, ganti di package.json scripts { start: "nodemon index.js"},
+    untuk deploy, ganti di package.json scripts jadi { start: "node index.js"},
     terus tuker landingpage apollo server, kalau mau.
     kalau udah balikin lagi.
 
