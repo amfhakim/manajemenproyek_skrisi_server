@@ -2,14 +2,17 @@ const { model, Schema } = require("mongoose");
 
 const toolSchema = new Schema({
   nama: String,
-  jumlah: String,
-  hargaSewa: String,
-  totalHarga: String,
-  createdAt: String,
-  username: String,
+  jumlah: Number,
+  status: Boolean,
   taskId: {
     type: Schema.Types.ObjectId,
     ref: "tasks",
+  },
+  createdAt: String,
+  username: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "users",
   },
 });
 

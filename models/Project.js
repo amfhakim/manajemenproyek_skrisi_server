@@ -6,7 +6,7 @@ const projectSchema = new Schema({
   budget: String,
   startAt: String,
   endAt: String,
-  progres: String,
+  progres: Number,
   taskIds: [
     {
       type: Schema.Types.ObjectId,

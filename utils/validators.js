@@ -132,8 +132,16 @@ module.exports.validateWorkerInput = (input, checkNama) => {
   };
 };
 
-module.exports.validateProjectInput = (nama, alamat, namaCustomer) => {
+module.exports.validateProjectInput = (
+  nama,
+  alamat,
+  namaCustomer,
+  startAt,
+  endAt
+) => {
   const errors = {};
+  let tanggalMulai, tanggalSelesai;
+
   if (nama.trim() === "") {
     errors.nama = "nama tidak boleh kosong";
   }
@@ -143,7 +151,16 @@ module.exports.validateProjectInput = (nama, alamat, namaCustomer) => {
   if (namaCustomer.trim() === "") {
     errors.namaCustomer = "alamat tidak boleh kosong";
   }
-
+  if (startAt != null) {
+    tanggalMulai = new Date(startAt).toISOString();
+  }
+  if (endAt != null) {
+    tanggalSelesai = new Date(endAt).toISOString();
+  }
+  if (tanggalMulai > tanggalSelesai) {
+    errors.tanggal =
+      "tanggal selesai tidak boleh lebih dulu dari tanggal mulai";
+  }
   return {
     errors,
     valid: Object.keys(errors).length < 1,
@@ -154,6 +171,7 @@ module.exports.validateUpdateProjectInput = (input) => {
   const { nama, alamat, namaCustomer, budget, startAt, endAt, namaWorkers } =
     input;
   const errors = {};
+  let tanggalMulai, tanggalSelesai;
 
   if (nama != null) {
     if (nama.trim() === "") {
@@ -169,6 +187,16 @@ module.exports.validateUpdateProjectInput = (input) => {
     if (namaCustomer.trim() === "") {
       errors.namaCustomer = "nama customer tidak boleh kosong";
     }
+  }
+  if (startAt != null) {
+    tanggalMulai = new Date(startAt).toISOString();
+  }
+  if (endAt != null) {
+    tanggalSelesai = new Date(endAt).toISOString();
+  }
+  if (tanggalMulai > tanggalSelesai) {
+    errors.tanggal =
+      "tanggal selesai tidak boleh lebih dulu dari tanggal mulai";
   }
 
   return {
@@ -194,4 +222,72 @@ module.exports.validatePresenceInput = (tanggal) => {
     errors,
     valid: Object.keys(errors).length < 1,
   };
+};
+
+module.exports.validateTaskInput = (input, projectStartAt, projectEndAt) => {
+  const errors = {};
+  const { nama, startAt, endAt } = input;
+  let tanggalMulai, tanggalSelesai;
+
+  if (nama != null) {
+    if (nama.trim() === "") {
+      errors.nama = "nama tidak boleh kosong";
+    }
+  }
+  if (startAt != null) {
+    tanggalMulai = new Date(startAt).toISOString();
+  }
+  if (endAt != null) {
+    tanggalSelesai = new Date(endAt).toISOString();
+  }
+  if (tanggalMulai > tanggalSelesai) {
+    errors.tanggal =
+      "tanggal selesai tidak boleh lebih dulu dari tanggal mulai";
+  }
+  if (projectStartAt != null && projectEndAt != null) {
+    if (
+      tanggalMulai < projectStartAt ||
+      tanggalMulai > projectEndAt ||
+      tanggalSelesai < projectStartAt ||
+      tanggalSelesai > projectEndAt
+    ) {
+      errors.tanggalProject =
+        "tanggal pekerjaan tidak boleh melebihi durasi project";
+    }
+  }
+  return { errors, valid: Object.keys(errors).length < 1 };
+};
+
+module.exports.validateMaterialInput = (input) => {
+  const errors = {};
+  const { nama, jumlah } = input;
+
+  if (nama != null) {
+    if (nama.trim() === "") {
+      errors.nama = "nama tidak boleh kosong";
+    }
+  }
+  if (jumlah != null) {
+    if (jumlah < 1) {
+      errors.jumlah = "jumlah tidak boleh kosong";
+    }
+  }
+  return { errors, valid: Object.keys(errors).length < 1 };
+};
+
+module.exports.validateToolInput = (input) => {
+  const errors = {};
+  const { nama, jumlah } = input;
+
+  if (nama != null) {
+    if (nama.trim() === "") {
+      errors.nama = "nama tidak boleh kosong";
+    }
+  }
+  if (jumlah != null) {
+    if (jumlah < 1) {
+      errors.jumlah = "jumlah tidak boleh kosong";
+    }
+  }
+  return { errors, valid: Object.keys(errors).length < 1 };
 };

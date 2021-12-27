@@ -164,7 +164,7 @@ module.exports = {
   },
 
   Worker: {
-    async presence(parent, args, context) {
+    async presences(parent, args, context) {
       const presence = await Presence.find({ workerId: parent._id });
       return presence;
     },

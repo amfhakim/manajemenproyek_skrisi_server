@@ -11,7 +11,14 @@ module.exports = gql`
     getWorker(workerId: ID!): Worker!
     getProjects: [Project!]
     getProject(projectId: ID!): Project!
-    getPresence: [Presence!]
+    getPresencesInWorkers(
+      workerIds: [ID!]
+      input: getPresenceInput
+    ): [Presence!]
+    getPresencesInProject(projectIds: ID!, input: getPresenceInput): [Presence!]
+    getTasksInProject(projectId: ID!): [Task!]
+    getMaterialsInTask(taskId: ID!): [Material!]
+    getToolsInTask(taskId: ID!): [Tool!]
   }
 
   type Mutation {
@@ -43,7 +50,25 @@ module.exports = gql`
       input: [String!]
       addOrDel: Boolean!
     ): Project!
-    createPresence(workerId: ID!, input: CreatePresenceInput!): Presence!
+    createPresence(
+      workerId: ID!
+      projectId: ID!
+      input: PresenceInput!
+    ): Presence!
+    updatePresence(
+      workerId: ID!
+      projectId: ID!
+      input: PresenceInput!
+    ): Presence!
+    createTask(projectId: ID!, input: createTaskInput!): Task!
+    updateTask(taskId: ID!, input: updateTaskInput!): Task!
+    deleteTask(taskId: ID!): String!
+    createMaterial(taskId: ID!, input: createMaterialInput!): Material!
+    updateMaterial(materialId: ID!, input: updateMaterialInput!): Material!
+    deleteMaterial(materialId: ID!): String!
+    createTool(taskId: ID!, input: createToolInput!): Tool!
+    updateTool(toolId: ID!, input: updateToolInput!): Tool!
+    deleteTool(toolId: ID!): String!
   }
 
   type User {
@@ -77,7 +102,7 @@ module.exports = gql`
     jabatan: String
     gaji: String
     foto: String
-    presence: [Presence]
+    presences: [Presence]
     createdAt: String
     username: String
     projects: [Project]
@@ -86,6 +111,7 @@ module.exports = gql`
   type Presence {
     id: ID!
     worker: Worker!
+    project: Project!
     tanggal: String!
     kehadiran: Boolean!
     createdAt: String
@@ -100,12 +126,49 @@ module.exports = gql`
     budget: String
     startAt: String
     endAt: String
-    progres: String
+    progres: Float
     namaWorkers: [String]
     createdAt: String
     username: String
     customer: Customer
     workers: [Worker]
+    presences: [Presence]
+    tasks: [Task]
+  }
+
+  type Task {
+    id: ID!
+    nama: String!
+    startAt: String!
+    endAt: String!
+    status: Boolean
+    materials: [Material]
+    tools: [Tool]
+    project: Project
+    createdAt: String
+    username: String
+  }
+
+  type Material {
+    id: ID!
+    nama: String!
+    jenis: String
+    jumlah: Int!
+    satuan: String
+    status: Boolean
+    task: Task
+    createdAt: String
+    username: String
+  }
+
+  type Tool {
+    id: ID!
+    nama: String!
+    jumlah: Int!
+    status: Boolean
+    task: Task
+    createdAt: String
+    username: String
   }
 
   input RegisterInput {
@@ -155,9 +218,13 @@ module.exports = gql`
     email: String
   }
 
-  input CreatePresenceInput {
+  input PresenceInput {
     tanggal: String
     kehadiran: Boolean
+  }
+  input getPresenceInput {
+    tanggalMulai: String
+    tanggalSelesai: String
   }
 
   input UpdateCustomerInput {
@@ -174,5 +241,41 @@ module.exports = gql`
     budget: String
     startAt: String
     endAt: String
+  }
+
+  input createTaskInput {
+    nama: String!
+    startAt: String
+    endAt: String
+  }
+  input updateTaskInput {
+    nama: String
+    startAt: String
+    endAt: String
+    status: Boolean
+  }
+
+  input createMaterialInput {
+    nama: String
+    jenis: String
+    jumlah: Int
+    satuan: String
+  }
+  input updateMaterialInput {
+    nama: String
+    jenis: String
+    jumlah: Int
+    satuan: String
+    status: Boolean
+  }
+
+  input createToolInput {
+    nama: String
+    jumlah: Int
+  }
+  input updateToolInput {
+    nama: String
+    jumlah: Int
+    status: Boolean
   }
 `;

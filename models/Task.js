@@ -2,10 +2,9 @@ const { model, Schema } = require("mongoose");
 
 const taskSchema = new Schema({
   nama: String,
-  pj: String,
   startAt: String,
   endAt: String,
-  progres: String,
+  status: Boolean,
   materialIds: [
     {
       type: Schema.Types.ObjectId,

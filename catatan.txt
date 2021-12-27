@@ -50,9 +50,47 @@ D. PROJECT
     7. update worker in project                             [checked]
     8. query customer in project                            [checked]
     9. query worker in project                              [checked]
+    10. query presences in project                          [checked]
 
 
     --------------MAU DEPLOY-------------
     untuk deploy, ganti di package.json scripts { start: "nodemon index.js"},
     terus tuker landingpage apollo server, kalau mau.
     kalau udah balikin lagi.
+
+24/12
+E. PRESENCE
+    1. create presence                                      [checked]
+    2. update presence                                      [checked]
+    3. get presences in workers                             [checked]
+    4. get presences in project                             [checked]
+    5. query workers in presences                           [checked]
+
+F. TASKS
+    1. create Task                                          [checked]
+    2. update Task                                          [checked]
+    3. delete Task                                          [checked]
+    4. get task in project                                  [checked]
+    5. query project                                        [checked]
+
+27/12
+G. MATERIAL
+    1. create                                               [checked]
+    2. update                                               [checked]
+    3. delete                                               [checked]
+    4. get material in task                                 [checked]
+    5. query task                                           [checked]
+
+H. TOOL
+    1. create                                               [checked]
+    2. update                                               [checked]
+    3. delete                                               [checked]
+    4. get tool in task                                     [checked]
+    5. query task                                           [checked]
+
+tambahan:
+bikin status di material dan tool                           [checked]
+bikin progres di project                                    [checked]
+masalah tanggal di project
+    - tanggal mulai < tanggal selesai                       [checked]
+    - tanggal task !< || >! tanggal project                 [checked]

@@ -5,6 +5,10 @@ const presenceSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "workers",
   },
+  projectId: {
+    type: Schema.Types.ObjectId,
+    ref: "projects",
+  },
   tanggal: String,
   kehadiran: Boolean,
   createdAt: String,

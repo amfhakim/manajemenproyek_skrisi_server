@@ -1,12 +1,14 @@
 const Project = require("../../models/Project");
 const Customer = require("../../models/Customer");
 const Worker = require("../../models/Worker");
+const Task = require("../../models/Task");
 const checkAuth = require("../../utils/check-auth");
 const {
   validateProjectInput,
   validateUpdateProjectInput,
 } = require("../../utils/validators");
 const { AuthenticationError, UserInputError } = require("apollo-server-errors");
+const Presence = require("../../models/Presence");
 
 module.exports = {
   Query: {
@@ -54,7 +56,9 @@ module.exports = {
       const { valid, errors } = validateProjectInput(
         nama,
         alamat,
-        namaCustomer
+        namaCustomer,
+        startAt,
+        endAt
       );
       if (!valid) {
         throw new UserInputError("Errors", { errors });
@@ -100,7 +104,6 @@ module.exports = {
         budget,
         startAt,
         endAt,
-        progres: "0",
         namaWorkers,
         workerIds: workerIds,
         customerId: customer.id,
@@ -164,7 +167,7 @@ module.exports = {
         throw new UserInputError("Errors", { errors });
       }
 
-      //update customerId in project
+      //validate customer
       const { namaCustomer } = input;
       if (namaCustomer) {
         const customer = await Customer.findOne({ nama: namaCustomer });
@@ -250,7 +253,7 @@ module.exports = {
           }
         }
         if (errors.length) {
-          throw new UserInputError(`pekerja sudah ada`, {
+          throw new UserInputError(`project input error`, {
             errors,
           });
         }
@@ -305,6 +308,7 @@ module.exports = {
       const customer = await Customer.findById(parent.customerId);
       return customer;
     },
+
     async workers(parent, args, context) {
       const workers = await Worker.find({
         nama: parent.namaWorkers.map((n) => {
@@ -312,6 +316,31 @@ module.exports = {
         }),
       });
       return workers;
+    },
+
+    async presences(parent, args, context) {
+      const presences = await Presence.find({ projectId: parent._id });
+      return presences;
+    },
+
+    async tasks(parent, args, context) {
+      const tasks = await Task.find({ projectId: parent._id });
+      return tasks;
+    },
+
+    async progres(parent, args, context) {
+      let totalProgress = 0.0;
+      let sumTaskDone = 0;
+      const tasks = await Task.find({ projectId: parent._id });
+
+      if (tasks.length > 0) {
+        sumTaskDone = tasks.filter((t) => t.status == true).length;
+        totalProgress = sumTaskDone / tasks.length;
+      }
+
+      parent.progres = totalProgress;
+      await parent.save();
+      return totalProgress;
     },
   },
 };
