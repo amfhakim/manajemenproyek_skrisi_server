@@ -99,8 +99,6 @@ module.exports = gql`
     alamat: String!
     notlp: String
     email: String
-    jabatan: String
-    gaji: String
     foto: String
     presences: [Presence]
     createdAt: String
@@ -123,7 +121,6 @@ module.exports = gql`
     nama: String!
     alamat: String!
     namaCustomer: String!
-    budget: String
     startAt: String
     endAt: String
     progres: Float
@@ -205,7 +202,6 @@ module.exports = gql`
     nama: String!
     alamat: String!
     namaCustomer: String!
-    budget: String
     startAt: String
     endAt: String
     namaWorkers: [String]
@@ -238,7 +234,6 @@ module.exports = gql`
     nama: String
     alamat: String
     namaCustomer: String
-    budget: String
     startAt: String
     endAt: String
   }

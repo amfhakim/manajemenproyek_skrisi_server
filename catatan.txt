@@ -94,3 +94,5 @@ bikin progres di project                                    [checked]
 masalah tanggal di project
     - tanggal mulai < tanggal selesai                       [checked]
     - tanggal task !< || >! tanggal project                 [checked]
+
+    

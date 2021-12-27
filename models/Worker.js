@@ -5,8 +5,6 @@ const workerSchema = new Schema({
   alamat: String,
   notlp: String,
   email: String,
-  jabatan: String,
-  gaji: String,
   foto: String,
   presenceIds: [
     {

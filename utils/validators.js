@@ -168,8 +168,7 @@ module.exports.validateProjectInput = (
 };
 
 module.exports.validateUpdateProjectInput = (input) => {
-  const { nama, alamat, namaCustomer, budget, startAt, endAt, namaWorkers } =
-    input;
+  const { nama, alamat, namaCustomer, startAt, endAt } = input;
   const errors = {};
   let tanggalMulai, tanggalSelesai;
 

@@ -3,7 +3,6 @@ const { model, Schema } = require("mongoose");
 const projectSchema = new Schema({
   nama: String,
   alamat: String,
-  budget: String,
   startAt: String,
   endAt: String,
   progres: Number,

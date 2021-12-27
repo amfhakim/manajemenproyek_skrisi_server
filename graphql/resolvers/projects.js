@@ -38,17 +38,7 @@ module.exports = {
   Mutation: {
     async createProject(
       _,
-      {
-        input: {
-          nama,
-          alamat,
-          namaCustomer,
-          budget,
-          startAt,
-          endAt,
-          namaWorkers,
-        },
-      },
+      { input: { nama, alamat, namaCustomer, startAt, endAt, namaWorkers } },
       context
     ) {
       const user = checkAuth(context);
@@ -101,7 +91,6 @@ module.exports = {
         nama,
         alamat,
         namaCustomer,
-        budget,
         startAt,
         endAt,
         namaWorkers,

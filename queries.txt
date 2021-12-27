@@ -208,13 +208,11 @@ mutation createProject{
     nama: "project 10",
     alamat: "Jl. Perintis, Tangerang",
     namaCustomer: "Kikan",
-    budget:"170000000",
     namaWorkers:["Yasin", "Hendra", "Usman"],
   }){
     id
     nama
     alamat
-    budget
     namaCustomer
     namaWorkers
     customer
@@ -232,7 +230,6 @@ mutation updateProject{
     namaCustomer
     startAt
     endAt
-    budget
     namaWorkers
     customer
   }
