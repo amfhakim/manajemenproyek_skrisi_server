@@ -31,6 +31,9 @@ module.exports = {
     ...materialsResolvers.Mutation,
     ...toolsResolvers.Mutation,
   },
+  User: {
+    ...usersResolvers.User,
+  },
   Project: {
     ...projectsResolvers.Project,
   },

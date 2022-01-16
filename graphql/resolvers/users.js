@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
 const { SECRET_KEY } = require("../../config");
 const User = require("../../models/User");
+const Manager = require("../../models/Manager");
 const checkAuth = require("../../utils/check-auth");
 const {
   validateRegisterInput,
@@ -127,7 +128,17 @@ module.exports = {
 
     async register(
       _,
-      { input: { username, email, password, confirmPassword, name } },
+      {
+        input: {
+          username,
+          email,
+          password,
+          confirmPassword,
+          name,
+          alamat,
+          notlp,
+        },
+      },
       context
     ) {
       const user = checkAuth(context);
@@ -164,7 +175,23 @@ module.exports = {
         name,
         createdAt: new Date().toISOString(),
       });
+      await newUser.save();
+
+      //create new manager
+      const newManager = new Manager({
+        nama: name,
+        alamat,
+        notlp,
+        email,
+        createdAt: new Date().toISOString(),
+        username: user.username,
+        userId: newUser.id,
+      });
+      await newManager.save();
+
+      newUser.managerId = newManager._id;
       const result = await newUser.save();
+
       return {
         ...result._doc,
         id: result._id,
@@ -183,6 +210,9 @@ module.exports = {
   },
 
   User: {
-    //query manager
+    async manager(parent, args, context) {
+      const manager = await Manager.findById(parent.managerId);
+      return manager;
+    },
   },
 };

@@ -1,7 +1,8 @@
 const Manager = require("../../models/Manager");
+const User = require("../../models/User");
 const Project = require("../../models/Project");
 const checkAuth = require("../../utils/check-auth");
-const { AuthenticationError, UserInputError } = require("apollo-server-errors");
+const { UserInputError } = require("apollo-server-errors");
 const { validateManagerInput } = require("../../utils/validators");
 
 module.exports = {
@@ -143,6 +144,11 @@ module.exports = {
     async projects(parent, args, context) {
       const projects = await Project.find({ managerId: parent._id });
       return projects;
+    },
+
+    async user(parent, args, context) {
+      const user = await User.findById(parent.userId);
+      return user;
     },
   },
 };

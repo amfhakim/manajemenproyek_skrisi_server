@@ -1,5 +1,6 @@
 const Project = require("../../models/Project");
 const Customer = require("../../models/Customer");
+const Manager = require("../../models/Manager");
 const Worker = require("../../models/Worker");
 const Task = require("../../models/Task");
 const checkAuth = require("../../utils/check-auth");
@@ -7,7 +8,7 @@ const {
   validateProjectInput,
   validateUpdateProjectInput,
 } = require("../../utils/validators");
-const { AuthenticationError, UserInputError } = require("apollo-server-errors");
+const { UserInputError } = require("apollo-server-errors");
 const Presence = require("../../models/Presence");
 
 module.exports = {
@@ -38,7 +39,17 @@ module.exports = {
   Mutation: {
     async createProject(
       _,
-      { input: { nama, alamat, namaCustomer, startAt, endAt, namaWorkers } },
+      {
+        input: {
+          nama,
+          alamat,
+          namaCustomer,
+          namaManager,
+          startAt,
+          endAt,
+          namaWorkers,
+        },
+      },
       context
     ) {
       const user = checkAuth(context);
@@ -60,6 +71,16 @@ module.exports = {
         throw new UserInputError("customer belum terdaftar", {
           errors: {
             customer: "customer belum terdaftar",
+          },
+        });
+      }
+
+      //validate manager
+      const manager = await Manager.findOne({ nama: namaManager });
+      if (!manager) {
+        throw new UserInputError("manager belum terdaftar", {
+          errors: {
+            customer: "manager belum terdaftar",
           },
         });
       }
@@ -91,11 +112,13 @@ module.exports = {
         nama,
         alamat,
         namaCustomer,
+        namaManager,
         startAt,
         endAt,
         namaWorkers,
         workerIds: workerIds,
         customerId: customer.id,
+        managerId: manager.id,
         user: user.id,
         username: user.username,
         createdAt: new Date().toISOString(),
@@ -105,6 +128,10 @@ module.exports = {
       //add projectId in customer
       customer.projectIds.push(newProject._id);
       await customer.save();
+
+      //add projectId in manager
+      manager.projectIds.push(newProject._id);
+      await manager.save();
 
       //add project id in workers
       for (i = 0; i < workerIds.length; i++) {
@@ -119,6 +146,7 @@ module.exports = {
       const user = checkAuth(context);
       const project = await Project.findById(projectId);
       const customer = await Customer.findById(project.customerId);
+      const manager = await Manager.findById(project.managerId);
       const workers = [{}];
       for (i = 0; i < project.workerIds.length; i++) {
         workers[i] = await Worker.findById(project.workerIds[i]);
@@ -133,6 +161,15 @@ module.exports = {
       }
       customer.projectIds = customerProjects;
       await customer.save();
+
+      //delete projectId in manager
+      const managerProjects = manager.projectIds;
+      let indexm = managerProjects.indexOf(projectId);
+      if (indexm > -1) {
+        managerProjects.splice(indexm, 1);
+      }
+      manager.projectIds = managerProjects;
+      await manager.save();
 
       //delete projectId in workers
       for (i = 0; i < workers.length; i++) {
@@ -187,6 +224,40 @@ module.exports = {
           }
           exCustomer.projectIds = customerProjects;
           await exCustomer.save();
+        }
+      }
+
+      //validate manager
+      const { namaManager } = input;
+      if (namaManager) {
+        const manager = await Manager.findOne({ nama: namaManager });
+        if (!manager) {
+          throw new UserInputError("maanger belum terdaftar", {
+            errors: {
+              customer: "manager belum terdaftar",
+            },
+          });
+        }
+        //change manager id in project
+        const project = await Project.findById(projectId);
+        const exManagerId = project.managerId;
+        project.managerId = manager._id;
+        await project.save();
+
+        //change project id in new manager
+        manager.projectIds.push(project._id);
+        await manager.save();
+
+        //delete project id in previous manager
+        const exManager = await Manager.findById(exManagerId);
+        if (exManager) {
+          const managerProjects = exManager.projectIds;
+          let index = managerProjects.indexOf(projectId);
+          if (index > -1) {
+            managerProjects.splice(index, 1);
+          }
+          exManager.projectIds = managerProjects;
+          await exManager.save();
         }
       }
 
@@ -296,6 +367,11 @@ module.exports = {
     async customer(parent, args, context) {
       const customer = await Customer.findById(parent.customerId);
       return customer;
+    },
+
+    async manager(parent, args, context) {
+      const manager = await Manager.findById(parent.managerId);
+      return manager;
     },
 
     async workers(parent, args, context) {

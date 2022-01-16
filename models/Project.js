@@ -24,6 +24,11 @@ const projectSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "customers",
   },
+  namaManager: String,
+  managerId: {
+    type: Schema.Types.ObjectId,
+    ref: "managers",
+  },
   createdAt: String,
   username: String,
   user: {

@@ -90,6 +90,7 @@ module.exports = gql`
     password: String!
     email: String
     name: String
+    manager: Manager
     createdAt: String
     token: String
     lastLoginAt: String
@@ -146,6 +147,7 @@ module.exports = gql`
     nama: String!
     alamat: String!
     namaCustomer: String!
+    namaManager: String
     startAt: String
     endAt: String
     progres: Float
@@ -153,6 +155,7 @@ module.exports = gql`
     createdAt: String
     username: String
     customer: Customer
+    manager: Manager
     workers: [Worker]
     presences: [Presence]
     tasks: [Task]
@@ -199,6 +202,8 @@ module.exports = gql`
     confirmPassword: String!
     email: String!
     name: String!
+    alamat: String
+    notlp: String
   }
 
   input UpdateUserInput {
@@ -234,6 +239,7 @@ module.exports = gql`
     nama: String!
     alamat: String!
     namaCustomer: String!
+    namaManager: String
     startAt: String
     endAt: String
     namaWorkers: [String]
@@ -273,6 +279,7 @@ module.exports = gql`
     nama: String
     alamat: String
     namaCustomer: String
+    namaManager: String
     startAt: String
     endAt: String
   }

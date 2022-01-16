@@ -13,7 +13,7 @@ const managerSchema = new Schema({
   ],
   createdAt: String,
   username: String,
-  user: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: "users",
   },
