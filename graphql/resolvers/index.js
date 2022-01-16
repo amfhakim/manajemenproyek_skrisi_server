@@ -1,5 +1,6 @@
 const usersResolvers = require("./users");
 const customersResolvers = require("./customers");
+const managersResolvers = require("./managers");
 const workersResolvers = require("./workers");
 const projectsResolvers = require("./projects");
 const presenceResolvers = require("./presence");
@@ -11,6 +12,7 @@ module.exports = {
   Query: {
     ...usersResolvers.Query,
     ...customersResolvers.Query,
+    ...managersResolvers.Query,
     ...workersResolvers.Query,
     ...projectsResolvers.Query,
     ...presenceResolvers.Query,
@@ -21,6 +23,7 @@ module.exports = {
   Mutation: {
     ...usersResolvers.Mutation,
     ...customersResolvers.Mutation,
+    ...managersResolvers.Mutation,
     ...workersResolvers.Mutation,
     ...projectsResolvers.Mutation,
     ...presenceResolvers.Mutation,
@@ -33,6 +36,9 @@ module.exports = {
   },
   Customer: {
     ...customersResolvers.Customer,
+  },
+  Manager: {
+    ...managersResolvers.Manager,
   },
   Worker: {
     ...workersResolvers.Worker,

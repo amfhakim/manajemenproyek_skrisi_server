@@ -7,6 +7,8 @@ module.exports = gql`
     getUser(userId: ID!): User!
     getCustomers: [Customer!]
     getCustomer(customerId: ID!): Customer!
+    getManagers: [Manager!]
+    getManager(managerId: ID!): Manager!
     getWorkers: [Worker!]
     getWorker(workerId: ID!): Worker!
     getProjects: [Project!]
@@ -17,6 +19,7 @@ module.exports = gql`
     ): [Presence!]
     getPresencesInProject(projectIds: ID!, input: getPresenceInput): [Presence!]
     getTasksInProject(projectId: ID!): [Task!]
+    getTask(taskId: ID!): Task!
     getMaterialsInTask(taskId: ID!): [Material!]
     getToolsInTask(taskId: ID!): [Tool!]
   }
@@ -34,6 +37,14 @@ module.exports = gql`
       projectIds: [ID!]
       addOrDel: Boolean!
     ): Customer!
+    createManager(input: ManagerInput!): Manager!
+    deleteManager(managerId: ID!): String!
+    updateManager(managerId: ID!, input: UpdateManagerInput!): Manager!
+    managerUpdateProjects(
+      managerId: ID!
+      projectIds: [ID!]
+      addOrDel: Boolean!
+    ): Manager!
     createWorker(input: WorkerInput!): Worker!
     deleteWorker(workerId: ID!): String!
     updateWorker(workerId: ID!, input: UpdateWorkerInput!): Worker!
@@ -91,6 +102,18 @@ module.exports = gql`
     projects: [Project]
     createdAt: String
     username: String
+  }
+
+  type Manager {
+    id: ID!
+    nama: String!
+    alamat: String
+    notlp: String!
+    email: String!
+    projects: [Project]
+    createdAt: String
+    username: String
+    user: User
   }
 
   type Worker {
@@ -191,6 +214,13 @@ module.exports = gql`
     email: String!
   }
 
+  input ManagerInput {
+    nama: String!
+    alamat: String!
+    notlp: String!
+    email: String!
+  }
+
   input WorkerInput {
     nama: String!
     alamat: String!
@@ -224,6 +254,13 @@ module.exports = gql`
   }
 
   input UpdateCustomerInput {
+    nama: String
+    alamat: String
+    notlp: String
+    email: String
+  }
+
+  input UpdateManagerInput {
     nama: String
     alamat: String
     notlp: String

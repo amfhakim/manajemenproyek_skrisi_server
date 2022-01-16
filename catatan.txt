@@ -95,4 +95,22 @@ masalah tanggal di project
     - tanggal mulai < tanggal selesai                       [checked]
     - tanggal task !< || >! tanggal project                 [checked]
 
-    
+=======================
+8/1/2021
+
+yo welcome back!
+hari ini kita mau bikin:
+1. authorization untuk semua fitur
+2. bikin model untuk manager
+3. bikin cara nyimpen gambar & file
+
+anjir banyak :')
+yuk 1 1
+
+1. bikin manager
+    - model udah
+    - typedefs udah
+    - resolver udah
+    - penyesuaian dgn user
+        - user model hapus email & name
+        - sambungkan dgn manager one to one user

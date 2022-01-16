@@ -181,4 +181,8 @@ module.exports = {
       }
     },
   },
+
+  User: {
+    //query manager
+  },
 };

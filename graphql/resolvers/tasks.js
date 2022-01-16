@@ -17,6 +17,16 @@ module.exports = {
         throw new Error(err);
       }
     },
+
+    async getTask(parent, { taskId }, context) {
+      const user = checkAuth(context);
+      try {
+        const task = await Task.findById(taskId);
+        return task;
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
   },
   Mutation: {
     async createTask(parent, { projectId, input }, context) {
