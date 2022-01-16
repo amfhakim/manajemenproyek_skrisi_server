@@ -90,6 +90,7 @@ module.exports = gql`
     password: String!
     email: String
     name: String
+    managerId: ID
     manager: Manager
     createdAt: String
     token: String
