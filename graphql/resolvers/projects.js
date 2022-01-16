@@ -3,6 +3,7 @@ const Customer = require("../../models/Customer");
 const Manager = require("../../models/Manager");
 const Worker = require("../../models/Worker");
 const Task = require("../../models/Task");
+const User = require("../../models/User");
 const checkAuth = require("../../utils/check-auth");
 const {
   validateProjectInput,
@@ -13,10 +14,21 @@ const Presence = require("../../models/Presence");
 
 module.exports = {
   Query: {
-    async getProjects() {
+    async getProjects(parent, args, context) {
+      const user = checkAuth(context);
+      const getUser = await User.findOne({ username: user.username });
       try {
-        const projects = await Project.find().sort({ createdAt: -1 });
-        return projects;
+        if (user.username == "admin") {
+          const projects = await Project.find().sort({ createdAt: -1 });
+          return projects;
+        } else {
+          const projects = await Project.find({
+            namaManager: getUser.name,
+          }).sort({
+            createdAt: -1,
+          });
+          return projects;
+        }
       } catch (err) {
         throw new Error(err);
       }
@@ -154,31 +166,37 @@ module.exports = {
       await project.delete();
 
       //delete projectId in customer
-      const customerProjects = customer.projectIds;
-      let index = customerProjects.indexOf(projectId);
-      if (index > -1) {
-        customerProjects.splice(index, 1);
+      if (customer) {
+        const customerProjects = customer.projectIds;
+        let index = customerProjects.indexOf(projectId);
+        if (index > -1) {
+          customerProjects.splice(index, 1);
+        }
+        customer.projectIds = customerProjects;
+        await customer.save();
       }
-      customer.projectIds = customerProjects;
-      await customer.save();
 
       //delete projectId in manager
-      const managerProjects = manager.projectIds;
-      let indexm = managerProjects.indexOf(projectId);
-      if (indexm > -1) {
-        managerProjects.splice(indexm, 1);
+      if (manager) {
+        const managerProjects = manager.projectIds;
+        let indexm = managerProjects.indexOf(projectId);
+        if (indexm > -1) {
+          managerProjects.splice(indexm, 1);
+        }
+        manager.projectIds = managerProjects;
+        await manager.save();
       }
-      manager.projectIds = managerProjects;
-      await manager.save();
 
       //delete projectId in workers
-      for (i = 0; i < workers.length; i++) {
-        const workerProjects = workers[i].projectIds;
-        let index = workerProjects.indexOf(projectId);
-        if (index > -1) {
-          workerProjects.splice(index, 1);
+      if (workers.length > 0) {
+        for (i = 0; i < workers.length; i++) {
+          const workerProjects = workers[i].projectIds;
+          let index = workerProjects.indexOf(projectId);
+          if (index > -1) {
+            workerProjects.splice(index, 1);
+          }
+          workers[i].update({ projectIds: workerProjects });
         }
-        workers[i].update({ projectIds: workerProjects });
       }
 
       return "data project berhasil dihapus";
