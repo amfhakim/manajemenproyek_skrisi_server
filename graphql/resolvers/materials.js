@@ -15,6 +15,16 @@ module.exports = {
         throw new Error(err);
       }
     },
+
+    async getMaterial(parent, { materialId }, context) {
+      const user = checkAuth(context);
+      try {
+        const material = await Material.findById(materialId);
+        return material;
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
   },
 
   Mutation: {

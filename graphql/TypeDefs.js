@@ -22,6 +22,8 @@ module.exports = gql`
     getTask(taskId: ID!): Task!
     getMaterialsInTask(taskId: ID!): [Material!]
     getToolsInTask(taskId: ID!): [Tool!]
+    getTool(toolId: ID!): Tool!
+    getMaterial(materialId: ID!): Material!
   }
 
   type Mutation {

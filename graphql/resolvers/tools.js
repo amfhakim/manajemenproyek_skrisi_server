@@ -15,6 +15,16 @@ module.exports = {
         throw new Error(err);
       }
     },
+
+    async getTool(parent, { toolId }, context) {
+      const user = checkAuth(context);
+      try {
+        const tool = await Tool.findById(toolId);
+        return tool;
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
   },
 
   Mutation: {
